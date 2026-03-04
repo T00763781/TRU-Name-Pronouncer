@@ -16,31 +16,54 @@
         <label class="sr-only" for="nameInput">Add your name</label>
         <input id="nameInput" class="name-input" type="text" placeholder="Add your name" autocomplete="off" spellcheck="false" />
 
+        <div class="examples" id="examples" aria-label="Example names">
+          <span class="examples-label">Try:</span>
+          <button class="example-chip" type="button" data-name="Nguyen">Nguyen</button>
+          <button class="example-chip" type="button" data-name="Ratnayake">Ratnayake</button>
+          <button class="example-chip" type="button" data-name="Trivedi">Trivedi</button>
+          <button class="example-chip" type="button" data-name="Quesada">Quesada</button>
+        </div>
+
         <div class="row">
           <div id="syllableEditor" class="chips" aria-label="Syllable chips"></div>
-          <button id="addSyllableBtn" class="add-btn" type="button" aria-label="Add syllable">+</button>
+          <button id="addSyllableBtn" class="add-btn" type="button" aria-label="Add syllable" title="Add syllable">+</button>
+        </div>
+
+        <div class="meta" id="metaLine" aria-live="polite">
+          <span class="meta-pill" id="metaPrimary"></span>
+          <span class="meta-pill meta-ghost" id="metaSecondary"></span>
         </div>
 
         <label class="sr-only" for="hintInput">Plain language guidance</label>
-        <input id="hintInput" class="hint-input" type="text" placeholder='Add plain language guidance (e.g., Like "David" with a “K” instead of “D”)' />
+        <input id="hintInput" class="hint-input" type="text" placeholder='Plain language guidance (auto-filled — edit if you like)' />
+        <div class="microcopy" id="microcopy">
+          Click a syllable to pick alternatives. If something looks off, adjust it — best guesses are still guesses.
+        </div>
+
+        <div class="warnings hidden" id="warnings" role="status" aria-live="polite"></div>
       </div>
     </section>
 
     <section class="preview" aria-label="Pronunciation card preview">
       <div class="preview-card" id="previewCard">
-        <div class="preview-name" id="cardName"> </div>
+        <div class="preview-name" id="cardName"></div>
         <div class="preview-chips" id="cardSyllables"></div>
         <div class="preview-hint" id="cardHint"></div>
+        <div class="preview-foot" id="cardFoot">Pronunciation guide</div>
       </div>
 
       <div class="save-shell">
-        <button class="save-btn" id="saveBtn" type="button">Save</button>
+        <div class="save-actions" aria-label="Quick actions">
+          <button class="mini-btn" id="copyBtn" type="button" title="Copy as text" aria-label="Copy as text">⧉ Copy</button>
+          <button class="mini-btn" id="copyHtmlBtn" type="button" title="Copy as HTML" aria-label="Copy as HTML">&lt;/&gt; HTML</button>
+          <button class="mini-btn mini-ghost" id="resetBtn" type="button" title="Reset to engine guess" aria-label="Reset to engine guess">↺ Reset</button>
+        </div>
+        <button class="save-btn" id="saveBtn" type="button">Create card</button>
+        <p class="subnote" id="saveNote">Creates a shareable HTML page (download) and copies a text version.</p>
       </div>
 
-      <p class="subnote" id="saveNote">Saving downloads a shareable HTML card.</p>
+      <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
     </section>
-
-    <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
   </main>
 
   <script type="module" src="app.js"></script>
