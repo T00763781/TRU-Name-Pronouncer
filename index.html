@@ -1,26 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TRU Pronounce — Name Breakdown</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TRU Pronounce — Share your name</title>
+  <meta name="description" content="A respectful, starting-point name pronunciation helper for TRU’s Name Inclusion Project." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="page">
-    <section class="editor" aria-label="Pronunciation editor">
-      <div class="editor-card">
-        <div class="mode-toggle" role="tablist" aria-label="Mode">
-          <button id="modeSingle" class="mode-btn active" role="tab" aria-selected="true" type="button">Single name</button>
-          <button id="modeList" class="mode-btn" role="tab" aria-selected="false" type="button">Class list</button>
-        </div>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-        <!-- Single-name mode -->
-        <div id="singlePane">
-          <label class="sr-only" for="nameInput">Add your name</label>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <img class="tru-mark" src="assets/icons/tru-mark.svg" alt="TRU" />
+      <div class="topbar-text">
+        <div class="title">TRU Pronounce</div>
+        <div class="subtitle">A starting point for sharing and learning names</div>
+      </div>
+      <div class="topbar-actions">
+        <a class="link" href="#about">About</a>
+        <a class="link" href="#tool">Use the tool</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <section class="hero" id="about">
+      <h1>Your name matters</h1>
+      <p class="lede">
+        This tool helps you create a quick, shareable pronunciation guide. It’s a <strong>starting point</strong>:
+        adjust it to match what you prefer. When in doubt, ask the person — they’re the source of truth.
+      </p>
+
+      <div class="callouts">
+        <div class="callout">
+          <h2>Privacy</h2>
+          <p>Runs in your browser — nothing is uploaded.</p>
+        </div>
+        <div class="callout">
+          <h2>Use case</h2>
+          <p>Great for email signatures, LMS profiles, introductions, and class rosters.</p>
+        </div>
+        <div class="callout">
+          <h2>Respect-first</h2>
+          <p>Prefer asking over guessing. Small effort, big belonging.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool-section" id="tool" aria-label="Name pronunciation helper">
+      <div class="tool-grid">
+        <div class="tool-card">
+          <div class="tool-head">
+            <h2>Share your name</h2>
+            <p class="sub">
+              Type a name, then click syllables to choose alternatives. Use <strong>Reset</strong> to return to a blank slate.
+            </p>
+          </div>
+
+          <label class="sr-only" for="nameInput">Name</label>
           <input id="nameInput" class="name-input" type="text" placeholder="Add your name" autocomplete="off" spellcheck="false" />
 
           <div class="examples" id="examples" aria-label="Example names">
@@ -36,67 +77,65 @@
             <button id="addSyllableBtn" class="add-btn" type="button" aria-label="Add syllable" title="Add syllable">+</button>
           </div>
 
-          <label class="sr-only" for="hintInput">How to say it (in your words)</label>
-          <input id="hintInput" class="hint-input" type="text" placeholder='How to say it (auto-filled — edit to match the person’s preference)' />
-
-          <div class="microcopy" id="microcopy">
-            Click a syllable to choose alternatives. This tool is a starting point — when in doubt, ask the person.
-            <span class="privacy">Runs in your browser — nothing is uploaded.</span>
-          </div>
-        </div>
-
-        <!-- Class-list mode -->
-        <div id="listPane" class="hidden">
-          <label class="sr-only" for="listInput">Paste a class list</label>
-          <textarea id="listInput" class="list-input" rows="7" placeholder="Paste names (one per line)…&#10;Nguyen&#10;Ratnayake&#10;Trivedi&#10;Quesada Bustos"></textarea>
-
-          <div class="list-actions">
-            <button id="generateListBtn" class="list-btn" type="button">Generate list</button>
-            <button id="copyAllTextBtn" class="list-btn ghost" type="button">Copy all (text)</button>
-            <button id="downloadAllBtn" class="list-btn ghost" type="button">Download all</button>
+          <div class="hint-wrap">
+            <label class="hint-label" for="hintInput">How to say it (in your words)</label>
+            <input id="hintInput" class="hint-input" type="text" placeholder="Optional — edit to match the person’s preference" />
+            <div class="helper" id="helper">
+              <div class="helper-line" id="helperOne"></div>
+              <div class="helper-line" id="helperCues"></div>
+              <div class="helper-line helper-muted" id="helperScript"></div>
+            </div>
           </div>
 
           <div class="microcopy">
-            Generates a starting point for each name. You can open any entry to adjust syllables and wording.
-            <span class="privacy">Runs in your browser — nothing is uploaded.</span>
+            Click a syllable to choose alternatives. This tool is a starting point — when in doubt, ask the person.
           </div>
 
-          <div id="listResults" class="list-results" aria-label="Generated list"></div>
-        </div>
-      </div>
-    </section>
+          <div class="actions">
+            <button class="btn ghost" id="copyTextBtn" type="button">⧉ Copy text</button>
+            <button class="btn ghost" id="copyHtmlBtn" type="button">&lt;/&gt; Copy HTML</button>
+            <button class="btn" id="downloadBtn" type="button">Download card</button>
+            <button class="btn danger" id="resetBtn" type="button">Reset</button>
+          </div>
 
-    <!-- Preview (Single name) -->
-    <section class="preview" id="singlePreview" aria-label="Pronunciation card preview">
-      <div class="preview-card" id="previewCard">
-        <div class="preview-name" id="cardName"></div>
-        <div class="preview-chips" id="cardSyllables"></div>
-        <div class="preview-hint" id="cardHint"></div>
-        <div class="preview-foot" id="cardFoot">How to say my name</div>
+          <p class="subnote">Downloads a shareable HTML card and copies a text version for email/LMS.</p>
+        </div>
+
+        <aside class="aside">
+          <div class="aside-card">
+            <h3>Two quick templates</h3>
+            <ul>
+              <li><strong>Rhymes with:</strong> “It rhymes with …”</li>
+              <li><strong>Like:</strong> “Like …, but …”</li>
+              <li><strong>Emphasis:</strong> “Put the emphasis on …”</li>
+              <li><strong>Invite correction:</strong> “Tell me if I should say it differently.”</li>
+            </ul>
+          </div>
+          <div class="aside-card">
+            <h3>Accessibility</h3>
+            <p>
+              All controls are keyboard accessible. If you embed this tool, keep the surrounding copy — it’s part of the inclusion practice.
+            </p>
+          </div>
+        </aside>
       </div>
 
-      <div class="save-shell">
-        <div class="save-actions" aria-label="Quick actions">
-          <button class="mini-btn" id="copyBtn" type="button" title="Copy text" aria-label="Copy text">⧉ Copy text</button>
-          <button class="mini-btn" id="copyHtmlBtn" type="button" title="Copy HTML" aria-label="Copy HTML">&lt;/&gt; Copy HTML</button>
-          <button class="mini-btn mini-ghost" id="resetBtn" type="button" title="Reset to suggestion" aria-label="Reset to suggestion">↺ Reset</button>
+      <div class="preview-wrap" aria-label="Preview">
+        <div class="preview-card" id="previewCard">
+          <div class="preview-name" id="cardName"></div>
+          <div class="preview-chips" id="cardSyllables"></div>
+          <div class="preview-hint" id="cardHint"></div>
+          <div class="preview-foot">How to say my name</div>
         </div>
-        <button class="save-btn" id="saveBtn" type="button">Download card</button>
-        <p class="subnote" id="saveNote">Downloads a shareable HTML card and copies a text version for email/LMS.</p>
       </div>
 
       <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
     </section>
 
-    <!-- Preview (Class list) -->
-    <section class="preview hidden" id="listPreview" aria-label="Class list preview">
-      <div class="list-preview-shell">
-        <div class="list-preview-head">
-          <h2 class="list-title">Class list cards</h2>
-          <p class="list-sub">A printable/shareable page of all generated cards (starting points).</p>
-        </div>
-        <div id="listCardGrid" class="list-card-grid" aria-label="Card grid"></div>
-      </div>
+    <section class="footer-note">
+      <p>
+        Built for TRU’s Name Inclusion Project (POC). This tool does not infer identity or origin.
+      </p>
     </section>
   </main>
 

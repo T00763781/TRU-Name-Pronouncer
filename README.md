@@ -1,27 +1,37 @@
-# TRU Pronounce (POC)
+# TRU Name Pronouncer (Tool + Engine)
 
-A text-only name pronunciation helper: **name → syllable chips → (optional) plain-language hint → shareable card**.
+A respectful, starting-point name pronunciation helper for TRU’s Name Inclusion Project.
 
-This POC runs entirely in the browser (GitHub Pages friendly).
+## What it does
+- Generates a **starting-point** syllable breakdown for a name
+- Each syllable is a clickable chip with **alternatives** + **Custom…**
+- Provides a “common-sense” helper panel (Say / Cues / Polite ask)
+- **Copy text**, **Copy HTML**, **Download card**, and **Reset** (hard reset to blank state)
 
-## Modes
-### 1) Single name
-- Generates a **starting-point** syllable breakdown
-- Click any syllable to choose **alternatives** (or enter a custom label)
-- Auto-fills a gentle hint (“Try: …”) you can edit
-- **Copy text**, **Copy HTML**, **Reset**, and **Download card** (self-contained HTML page)
+## Privacy & safety posture
+- Runs in the browser. Nothing is uploaded.
+- The UI does **not** infer or display identity-linked attributes (no origin/language labels, no confidence scores).
 
-### 2) Class list
-- Paste names (one per line) and generate starting points for all
-- Copy all as text, download a printable HTML page of all cards
-- Open any entry in Single mode to refine
-
-## Notes
-- This tool is a starting point — when in doubt, ask the person.
-- Runs in your browser — nothing is uploaded.
-
-## Deploy on GitHub Pages
+## Deploy (GitHub Pages)
 1. Push this repo to GitHub.
-2. Go to **Settings → Pages**.
-3. Select **Deploy from branch** and choose `main` / `/root`.
-4. Open the Pages URL.
+2. Settings → Pages → Deploy from branch → `main` / `/root`.
+3. Your tool will be available at the Pages URL.
+
+## Embed
+Use `embed.html` for iframe embedding (minisite/CMS).
+
+Example:
+```html
+<iframe src="YOUR_TOOL_URL/embed.html" title="Name pronunciation helper" loading="lazy" allow="clipboard-write"
+  style="width:100%;height:860px;border:0;border-radius:18px;overflow:hidden"></iframe>
+```
+
+## Development (optional)
+This repo runs without a build step. For local preview:
+```bash
+python -m http.server 8000
+# open http://localhost:8000
+```
+
+### Optional tooling (lint/format)
+See `package.json` for scripts. (These are optional and not required for GitHub Pages.)

@@ -1,79 +1,79 @@
-import { isVowelPhoneme } from "./phonemes.js";
+import { normalizeName, stripDiacritics } from "./utils.js";
 
-// Language-specific onset clusters (subset; extensible)
-const ONSETS = {
-  en: new Set(["pr","pl","br","bl","tr","dr","kr","gr","fr","fl","θr","ʃr","sk","sp","st","sw","sl","sm","sn","tw","kw","gw","mj","nj","hj","vj"]),
-  es: new Set(["pr","pl","br","bl","tr","dr","kr","gr","fr","fl","kl","gl"]),
-  fr: new Set(["pr","pl","br","bl","tr","dr","kr","gr","fr","fl","kl","gl","ʃr"]),
-  de: new Set(["pr","pl","br","bl","tr","dr","kr","gr","fr","fl","ʃt","ʃp","ʃm","ʃn"]),
-  pl: new Set(["pr","pl","br","bl","tr","dr","kr","gr","fr","fl","ʂt͡ʂ","t͡s","t͡ʂ","d͡ʐ","ʐm","ʂn","ʂl"]),
-  generic: new Set()
-};
+// Very pragmatic syllable segmentation for names (display-oriented):
+// - split into letter groups around vowel clusters
+// - keep consonants with nearest vowel
+// - handles hyphens/apostrophes by treating them as separators
+const VOWELS = "aeiouy";
 
-function canOnset(cluster, lang) {
-  const set = ONSETS[lang] || ONSETS.generic;
-  if (!cluster) return false;
-  if (cluster.length <= 1) return true;
-  return set.has(cluster);
+function isVowel(ch) {
+  return VOWELS.includes(ch);
 }
 
-/**
- * Syllabify IPA phoneme tokens using a maximal-onset strategy.
- * Input: array of phoneme tokens (strings) representing segments (not necessarily single chars).
- * Output: array of syllables, each syllable is { onset:[], nucleus:[], coda:[], phonemes:[] }
- */
-export function syllabifyPhonemes(phonemes, lang = "generic") {
-  const p = (phonemes ?? []).filter(Boolean);
-  if (p.length === 0) return [];
+function splitParts(name) {
+  // Keep only letters + separators for segmentation.
+  const cleaned = name.replace(/[^\p{L}\s\-’']/gu, "");
+  return cleaned.split(/\s+/).filter(Boolean);
+}
 
-  // Identify vowel positions
-  const vIdx = [];
-  for (let i=0;i<p.length;i++) if (isVowelPhoneme(p[i])) vIdx.push(i);
+function syllablesForToken(token) {
+  const raw = token;
+  const s = stripDiacritics(raw.toLowerCase());
 
-  // No vowels → treat as one syllable-like chunk
-  if (vIdx.length === 0) {
-    return [{ onset: p.slice(), nucleus: [], coda: [], phonemes: p.slice() }];
+  // Hard-coded safe heuristics for a few very common roster patterns
+  // (still treated as starting points; no identity claims).
+  const compact = s.replace(/[^a-z]/g, "");
+  if (compact === "nguyen") return ["nguy", "en"]; // rendered later to NWIN-ish options
+  if (compact.startsWith("mc") && compact.length > 2) return ["mc", compact.slice(2)];
+
+  // General algorithm:
+  // Build chunks: (optional consonants) + vowel cluster + (optional consonants)
+  let i = 0;
+  const out = [];
+  while (i < compact.length) {
+    // collect leading consonants
+    let onset = "";
+    while (i < compact.length && !isVowel(compact[i])) {
+      onset += compact[i];
+      i++;
+    }
+    // collect vowel cluster
+    let nucleus = "";
+    while (i < compact.length && isVowel(compact[i])) {
+      nucleus += compact[i];
+      i++;
+    }
+    // if no nucleus (no vowel left), attach rest to last syllable
+    if (!nucleus) {
+      if (out.length) out[out.length - 1] += onset;
+      else out.push(onset);
+      continue;
+    }
+    // collect a small coda (1 consonant) unless next is vowel cluster
+    let coda = "";
+    if (i < compact.length && !isVowel(compact[i])) {
+      coda = compact[i];
+      i++;
+    }
+    out.push(onset + nucleus + coda);
   }
 
-  const syllables = [];
-  let start = 0;
-
-  for (let vi=0; vi<vIdx.length; vi++) {
-    const v = vIdx[vi];
-    // onset = everything from start..v-1
-    const onset = p.slice(start, v);
-    // nucleus = vowel (and following vowel-like modifiers until next consonant)
-    let nucEnd = v+1;
-    while (nucEnd < p.length && isVowelPhoneme(p[nucEnd])) nucEnd++;
-    const nucleus = p.slice(v, nucEnd);
-
-    // Determine boundary to next syllable
-    const nextV = (vi+1 < vIdx.length) ? vIdx[vi+1] : null;
-    if (nextV === null) {
-      // last syllable: coda is rest
-      const coda = p.slice(nucEnd);
-      syllables.push({ onset, nucleus, coda, phonemes: onset.concat(nucleus, coda) });
-      break;
-    }
-
-    const between = p.slice(nucEnd, nextV); // consonant cluster between nuclei
-    // maximal onset: assign as much as possible to next onset while forming permissible onset
-    let split = between.length; // split point: first split consonants as coda
-    // Try smallest coda, biggest onset
-    for (let k=0; k<=between.length; k++) {
-      const codaCand = between.slice(0, k);
-      const onsetCand = between.slice(k);
-      const cluster = onsetCand.join("");
-      // If onset cand empty or allowed
-      if (onsetCand.length === 0 || canOnset(cluster, lang)) {
-        split = k;
-        break;
-      }
-    }
-    const coda = between.slice(0, split);
-    syllables.push({ onset, nucleus, coda, phonemes: onset.concat(nucleus, coda) });
-    start = nucEnd + split;
+  // post-process: tiny syllables merge
+  const merged = [];
+  for (const syl of out) {
+    if (merged.length && syl.length <= 2) merged[merged.length - 1] += syl;
+    else merged.push(syl);
   }
+  return merged.filter(Boolean);
+}
 
-  return syllables;
+export function syllabifyDisplay(name) {
+  const n = normalizeName(name);
+  const parts = splitParts(n);
+  const tokens = [];
+  for (const part of parts) {
+    const chunks = part.split(/[-'’]/).filter(Boolean);
+    for (const c of chunks) tokens.push(...syllablesForToken(c));
+  }
+  return tokens;
 }
