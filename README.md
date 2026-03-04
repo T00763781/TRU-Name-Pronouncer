@@ -1,99 +1,27 @@
-# 🔊 Say My Name — Name Pronunciation Tool
+# TRU Pronounce (POC)
 
-A fully client-side tool that helps people share how to pronounce their name — with phonetic breakdowns, plain language hints, audio recording, and embeddable signature elements.
+A text-only name pronunciation helper: **name → syllable chips → (optional) plain-language hint → shareable card**.
 
-**[Live Demo →](https://yourusername.github.io/say-my-name/)**
+This POC runs entirely in the browser (GitHub Pages friendly).
 
----
+## Modes
+### 1) Single name
+- Generates a **starting-point** syllable breakdown
+- Click any syllable to choose **alternatives** (or enter a custom label)
+- Auto-fills a gentle hint (“Try: …”) you can edit
+- **Copy text**, **Copy HTML**, **Reset**, and **Download card** (self-contained HTML page)
 
-## Features
+### 2) Class list
+- Paste names (one per line) and generate starting points for all
+- Copy all as text, download a printable HTML page of all cards
+- Open any entry in Single mode to refine
 
-- ✏️ **Enter your name** and auto-generate a syllable breakdown
-- 🔤 **Edit syllables** — add, remove, or rename any syllable pill
-- 💬 **Plain language hint** — e.g. *"Like David with a K"*
-- 🎙 **Record audio** directly in the browser (mic access)
-- 🔊 **Text-to-speech fallback** using the browser's built-in voices
-- 📋 **HTML email signature snippet** — copy/paste into Gmail, Outlook, Apple Mail
-- 📄 **Downloadable pronunciation page** — a self-contained `.html` file you can host anywhere
-- 🔒 **100% client-side** — no server, no data storage, no tracking
+## Notes
+- This tool is a starting point — when in doubt, ask the person.
+- Runs in your browser — nothing is uploaded.
 
----
-
-## Deploy to GitHub Pages (5 minutes)
-
-### Option A: Fork & Enable Pages
-
-1. Fork this repository
-2. Go to **Settings → Pages**
-3. Under **Source**, select `main` branch, `/ (root)` folder
-4. Click **Save** — your site will be live at `https://yourusername.github.io/say-my-name/`
-
-### Option B: New Repository
-
-1. Create a new repository on GitHub
-2. Upload all files in this folder:
-   - `index.html`
-   - `style.css`
-   - `app.js`
-   - `syllables.js`
-3. Enable GitHub Pages as above
-
----
-
-## How to use your pronunciation card
-
-### Email signature (HTML snippet)
-1. Complete all steps in the tool
-2. On the export page, click **Copy HTML**
-3. Open your email client's signature editor in HTML mode:
-   - **Gmail**: Settings → See all settings → Signature → `<>` (source)
-   - **Outlook**: File → Options → Mail → Signatures → edit in source
-   - **Apple Mail**: Preferences → Signatures → right-click → Edit source
-4. Paste the snippet at the end of your signature
-
-### Hosted pronunciation page
-1. Click **Download pronunciation page**
-2. You'll get a self-contained `.html` file (audio is embedded as base64)
-3. Upload it to:
-   - Your GitHub Pages repo (e.g. `how-to-say-your-name.html`)
-   - Any web host
-4. Link to it from your email signature, LinkedIn bio, etc.
-
----
-
-## Browser support
-
-| Feature | Chrome | Firefox | Safari | Edge |
-|---------|--------|---------|--------|------|
-| Audio recording | ✅ | ✅ | ✅ | ✅ |
-| TTS voices | ✅ | ✅ | ✅ | ✅ |
-| Download page | ✅ | ✅ | ✅ | ✅ |
-
-> **Note**: Microphone access requires HTTPS. GitHub Pages serves over HTTPS by default.
-
----
-
-## File structure
-
-```
-say-my-name/
-├── index.html      # Main app shell
-├── style.css       # All styles
-├── app.js          # App logic, recording, export
-├── syllables.js    # Syllabification algorithm
-└── README.md       # This file
-```
-
----
-
-## Customisation
-
-- **Colours**: Edit CSS variables at the top of `style.css`
-- **Fonts**: Change the Google Fonts import in `index.html`
-- **Syllabification**: Improve the algorithm in `syllables.js` for specific languages
-
----
-
-## License
-
-MIT — use it, fork it, build on it.
+## Deploy on GitHub Pages
+1. Push this repo to GitHub.
+2. Go to **Settings → Pages**.
+3. Select **Deploy from branch** and choose `main` / `/root`.
+4. Open the Pages URL.
