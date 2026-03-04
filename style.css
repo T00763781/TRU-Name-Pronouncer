@@ -726,3 +726,65 @@ footer {
   font-weight: 400;
   letter-spacing: 0.02em;
 }
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Syllable dropdown chips (text-only POC)
+   ────────────────────────────────────────────────────────────────────────── */
+
+.syl-pill { position: relative; overflow: visible; }
+
+.syl-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 8px 6px 8px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: none;
+}
+
+.syl-btn:focus { outline: none; background: rgba(255,255,255,0.10); }
+
+.syl-text { line-height: 1; }
+.syl-caret { font-size: 11px; opacity: 0.75; transform: translateY(-1px); }
+
+.syl-menu {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  background: rgba(255,255,255,0.98);
+  color: #112;
+  border-radius: 14px;
+  padding: 8px;
+  min-width: 140px;
+  box-shadow: 0 14px 30px rgba(0,0,0,0.16);
+  z-index: 20;
+}
+
+.syl-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 10px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #112;
+}
+
+.syl-option:hover { background: rgba(12, 58, 78, 0.10); }
+.syl-custom { opacity: 0.9; }
+
+.syl-pill.menu-open .syl-caret { opacity: 1; }

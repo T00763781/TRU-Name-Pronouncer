@@ -33,98 +33,41 @@
       <div class="step-label">02 — phonetic breakdown</div>
       <div id="dictBadge" class="dict-badge hidden"></div>
       <div id="originHint" class="origin-hint hidden"></div>
-      <p class="step-hint">UPPERCASE syllable = stressed. Edit freely, + to add, × to remove.</p>
+      <p class="step-hint">Click a syllable to pick alternatives. + to add, × to remove.</p>
+
       <div id="syllableEditor" class="syllable-editor"></div>
+
       <div class="hint-wrap">
         <label for="hintInput">Plain language hint <span class="optional">(optional)</span></label>
         <input type="text" id="hintInput" placeholder='e.g. Like "David" with a "K" instead of "D"' />
       </div>
-      <button class="btn-primary" id="toAudioBtn">Add audio →</button>
+
+      <button class="btn-primary" id="toCardBtn">Save →</button>
     </section>
 
-    <!-- STEP 3: Audio -->
+    <!-- STEP 3: Card + Export -->
     <section class="step hidden" id="step-3">
-      <div class="step-label">03 — record your name</div>
-
-      <div class="audio-tabs">
-        <button class="tab-btn active" data-tab="record">🎙 Record</button>
-        <button class="tab-btn" data-tab="tts">🔊 Text-to-Speech</button>
-      </div>
-
-      <!-- Record tab -->
-      <div class="tab-panel" id="tab-record">
-        <div class="recorder-ui">
-          <div id="waveform" class="waveform">
-            <div class="waveform-bars" id="waveformBars"></div>
-          </div>
-          <div class="recorder-controls">
-            <button id="recordBtn" class="btn-record">
-              <span class="rec-dot"></span> Start Recording
-            </button>
-            <button id="stopBtn" class="btn-stop hidden">⬛ Stop</button>
-          </div>
-          <div id="recordingStatus" class="recording-status"></div>
-          <audio id="audioPlayback" class="audio-player hidden" controls></audio>
-          <button id="rerecordBtn" class="btn-ghost hidden">↺ Re-record</button>
-        </div>
-      </div>
-
-      <!-- TTS tab -->
-      <div class="tab-panel hidden" id="tab-tts">
-        <div class="tts-ui">
-          <div class="tts-input-wrap">
-            <label>Phonetic spelling for TTS</label>
-            <input type="text" id="ttsInput" placeholder="e.g. Day-veek" />
-          </div>
-          <div class="tts-voices">
-            <label>Voice</label>
-            <select id="voiceSelect"></select>
-          </div>
-          <div class="tts-controls">
-            <button id="ttsPreviewBtn" class="btn-ghost">▶ Preview</button>
-            <button id="ttsGenerateBtn" class="btn-primary">Generate Audio</button>
-          </div>
-          <div id="ttsStatus" class="recording-status"></div>
-          <audio id="ttsPlayback" class="audio-player hidden" controls></audio>
-        </div>
-      </div>
-
-      <div class="step-actions">
-        <button class="btn-ghost" id="skipAudioBtn">Skip audio →</button>
-        <button class="btn-primary hidden" id="toExportBtn">Generate exports →</button>
-      </div>
-    </section>
-
-    <!-- STEP 4: Export -->
-    <section class="step hidden" id="step-4">
-      <div class="step-label">04 — your pronunciation card</div>
+      <div class="step-label">03 — your pronunciation card</div>
 
       <div class="preview-card" id="previewCard">
         <div class="card-name" id="cardName"></div>
         <div class="card-syllables" id="cardSyllables"></div>
         <div class="card-hint" id="cardHint"></div>
-        <button class="card-audio-btn" id="cardAudioBtn" title="Hear pronunciation">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-          </svg>
-        </button>
       </div>
 
       <div class="export-options">
         <div class="export-card">
-          <div class="export-card-title">📋 HTML Signature Snippet</div>
-          <p>Copy and paste into your email signature (Gmail, Outlook, etc.)</p>
+          <div class="export-card-title">📋 HTML Snippet</div>
+          <p>Copy and paste into an email signature, LMS profile, or a course page.</p>
           <div class="code-block" id="htmlSnippetBlock"></div>
           <button class="btn-copy" id="copyHtmlBtn">Copy HTML</button>
         </div>
 
         <div class="export-card">
-          <div class="export-card-title">🔗 Hosted Badge + Link</div>
-          <p>Download a self-contained HTML file. Host it on GitHub Pages and link to it.</p>
+          <div class="export-card-title">⬇ Download card page</div>
+          <p>Download a self-contained HTML file you can host on GitHub Pages.</p>
           <div class="badge-preview" id="badgePreview"></div>
-          <button class="btn-primary" id="downloadPageBtn">⬇ Download pronunciation page</button>
+          <button class="btn-primary" id="downloadPageBtn">Download HTML page</button>
         </div>
       </div>
 
@@ -135,6 +78,7 @@
   <footer>
     <p>Built for humans. Names matter. ◎</p>
   </footer>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>

@@ -4,42 +4,9 @@ import { detectLanguage } from "./langDetect.js";
 import { getLanguageModule } from "./languageRegistry.js";
 import { syllabifyPhonemes } from "./syllabify.js";
 import { ipaJoin } from "./phonemes.js";
-import { inferStress, applyStressToDisplay } from "./stress.js";
+import { inferStress } from "./stress.js";
 import { EN_NAME_DICT } from "./dictionaries/en_names.js";
-
-function orthographicSyllabify(word) {
-  const w = (word ?? "").toString();
-  if (!w) return [];
-  // Keep apostrophes inside token; split on vowel groups
-  const V = /[aeiouyàáâäãåæèéêëìíîïòóôöõøœùúûüÿăâđêôơưăẹịộờừỳỹỷỵ]/i;
-  const chars = [...w];
-  const syllables = [];
-  let buf = "";
-  let inVowel = false;
-
-  for (let i=0;i<chars.length;i++) {
-    const ch = chars[i];
-    const isV = V.test(ch);
-    if (buf && isV !== inVowel && !isV) {
-      // boundary between vowel group and consonant, keep consonant for next
-      syllables.push(buf);
-      buf = ch;
-      inVowel = isV;
-    } else {
-      if (!buf) inVowel = isV;
-      buf += ch;
-      inVowel = isV;
-    }
-  }
-  if (buf) syllables.push(buf);
-
-  // Merge tiny leading consonants into next syllable
-  if (syllables.length > 1 && !V.test(syllables[0]) && syllables[0].length <= 2) {
-    syllables[1] = syllables[0] + syllables[1];
-    syllables.shift();
-  }
-  return syllables.filter(Boolean);
-}
+import { syllableToLabel, generateLabelOptions, generateLabelOptionsFromLabel } from "./phoneticDisplay.js";
 
 function buildOriginHint(lang) {
   const l = (lang || "").toLowerCase();
@@ -72,7 +39,7 @@ function computeConfidence({ dictHit, langConfidence, stressConfidence, script }
 }
 
 /**
- * Public API
+ * Public API: full analysis (still useful for debugging/diagnostics).
  */
 export function analyzeName(rawName, options = {}) {
   const name = normalizeName(rawName);
@@ -82,7 +49,7 @@ export function analyzeName(rawName, options = {}) {
   // Identify "words" only (ignore separators) for analysis
   const wordTokens = tokens.filter(t => t.type === "word").map(t => t.value).filter(Boolean);
 
-  // Per-token analysis and overall language guess
+  // Overall language guess
   const det = detectLanguage(name);
   const lang = det.lang || "en";
 
@@ -91,58 +58,52 @@ export function analyzeName(rawName, options = {}) {
 
   const module = getLanguageModule(lang);
 
-  // For each word token, run g2p and syllabify IPA
+  // Per-token analysis and syllabification
   const parts = [];
   let allPh = [];
+  const phonemeSyllablesFlat = [];
+
   for (const w of wordTokens) {
     const g = module.g2p(w);
     const ph = (g?.phonemes ?? []).slice();
     const syl = syllabifyPhonemes(ph, lang);
+
     parts.push({
       raw: w,
       phonemes: ph,
       ipa: ipaJoin(ph),
+      syllables: syl, // keep full syllable objects for UI candidate generation
       syllablesIPA: syl.map(s => ipaJoin(s.phonemes)),
       meta: g?.meta ?? {}
     });
+
+    for (const s of syl) phonemeSyllablesFlat.push(s);
+
     // add a boundary marker between tokens to avoid merging
     if (allPh.length) allPh.push(" ");
     allPh = allPh.concat(ph);
   }
 
-  // Display syllables: dictionary if exact single-token match; else orthographic per token
-  let displaySyllables = null;
-  if (dictHit) {
-    displaySyllables = dictHit.syllables.slice();
-  } else {
-    // Build display syllables by concatenating per-token orthographic syllables
-    displaySyllables = [];
-    for (const w of wordTokens) {
-      const syls = orthographicSyllabify(w);
-      if (displaySyllables.length) displaySyllables.push("·");
-      displaySyllables.push(...syls);
-    }
-  }
+  // Build base display syllables (uppercase) for UI:
+  // - If exact dictionary hit, trust curated syllables
+  // - Else, derive from phoneme syllables → common-sense labels
+  const baseSyllablesUpper = (() => {
+    if (dictHit) return dictHit.syllables.map(s => (s ?? "").toString().toUpperCase()).filter(Boolean);
+    if (phonemeSyllablesFlat.length) return phonemeSyllablesFlat.map(syllableToLabel).filter(Boolean);
+    return [name.toUpperCase()];
+  })();
 
-  // Stress inference
+  // Stress inference (index into syllables)
   const stress = inferStress({
-    displaySyllables: dictHit ? displaySyllables : null,
+    displaySyllables: dictHit ? baseSyllablesUpper : null,
     lang,
-    syllableCount: displaySyllables.filter(s => s !== "·").length
+    syllableCount: baseSyllablesUpper.length
   });
 
-  // Apply stress to display syllables (skip separators)
-  const stressedDisplay = (() => {
-    if (!displaySyllables) return [];
-    const out = [];
-    let syllIndex = 0;
-    for (const s of displaySyllables) {
-      if (s === "·") { out.push(s); continue; }
-      out.push(syllIndex === stress.index ? s.toUpperCase() : s);
-      syllIndex++;
-    }
-    return out;
-  })();
+  // Apply stress casing convention:
+  // - stressed syllable: UPPERCASE
+  // - unstressed syllables: lowercase
+  const displaySyllables = baseSyllablesUpper.map((s, i) => (i === stress.index ? s.toUpperCase() : s.toLowerCase()));
 
   const originHint = buildOriginHint(lang);
   const confidence = computeConfidence({
@@ -163,11 +124,54 @@ export function analyzeName(rawName, options = {}) {
     script,
     parts,
     ipa: ipaJoin(allPh),
-    displaySyllables: stressedDisplay,
+    // UI-friendly syllables:
+    baseSyllablesUpper,
+    displaySyllables,
     stress,
     originHint,
     confidence,
-    warnings
+    warnings,
+    dictHit: !!dictHit,
+    dictSyllables: dictHit ? dictHit.syllables.slice() : null,
+    phonemeSyllablesFlat: dictHit ? null : phonemeSyllablesFlat
+  };
+}
+
+/**
+ * New: Syllable candidates for dropdown selection (engine default + alternatives).
+ * Returns uppercase options; UI can apply stress casing for display.
+ */
+export function generateSyllableCandidates(rawName) {
+  const r = analyzeName(rawName);
+  const lang = r.langGuess?.lang || "en";
+
+  const syllables = r.baseSyllablesUpper.map((baseUpper, i) => {
+    const stressed = i === r.stress.index;
+
+    let optionsUpper = [];
+    if (r.dictHit) {
+      optionsUpper = generateLabelOptionsFromLabel(baseUpper);
+    } else if (r.phonemeSyllablesFlat && r.phonemeSyllablesFlat[i]) {
+      optionsUpper = generateLabelOptions(r.phonemeSyllablesFlat[i], lang);
+    } else {
+      optionsUpper = [baseUpper];
+    }
+
+    // Guarantee base first
+    if (!optionsUpper.includes(baseUpper)) optionsUpper.unshift(baseUpper);
+    optionsUpper = optionsUpper.slice(0, 6);
+
+    return { baseUpper, stressed, optionsUpper };
+  });
+
+  return {
+    name: r.name,
+    syllables,
+    langGuess: r.langGuess,
+    originHint: r.originHint,
+    confidence: r.confidence,
+    warnings: r.warnings,
+    dictHit: r.dictHit
   };
 }
 
@@ -176,9 +180,7 @@ export function analyzeName(rawName, options = {}) {
  */
 export function syllabifyName(name) {
   const r = analyzeName(name);
-  // Convert display syllables to array without separators used by UI
-  const syls = (r.displaySyllables || []).filter(s => s !== "·");
-  return syls.length ? syls : [name];
+  return (r.displaySyllables && r.displaySyllables.length) ? r.displaySyllables.slice() : [name];
 }
 
 export function isInDictionary(name) {
