@@ -1,0 +1,728 @@
+/* ─── Reset & Base ────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --teal-dark: #0d2b29;
+  --teal: #1a9e8f;
+  --teal-light: #e8f7f5;
+  --teal-mid: #0e7a6e;
+  --cream: #f5f0e8;
+  --cream-dark: #ede7da;
+  --text: #0d2b29;
+  --text-muted: #5a7572;
+  --border: #b2dfdb;
+  --radius: 16px;
+  --shadow: 0 8px 32px rgba(13,43,41,0.12);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--teal-dark);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── Background texture ──────────────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(26,158,143,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 90%, rgba(26,158,143,0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Header ──────────────────────────────────────────────────────────────── */
+header {
+  text-align: center;
+  padding: 3.5rem 2rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 0.75rem;
+}
+
+.logo-icon {
+  color: var(--teal);
+  font-size: 1.8rem;
+  line-height: 1;
+  animation: spin 12s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.logo-text {
+  font-family: 'Fraunces', serif;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--cream);
+  letter-spacing: -0.02em;
+}
+
+.logo-text em {
+  color: var(--teal);
+  font-style: italic;
+}
+
+.tagline {
+  color: rgba(245,240,232,0.55);
+  font-size: 14px;
+  letter-spacing: 0.03em;
+}
+
+/* ─── Main ────────────────────────────────────────────────────────────────── */
+main {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Steps ───────────────────────────────────────────────────────────────── */
+.step {
+  background: var(--cream);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  animation: stepIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes stepIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.step-label {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--teal);
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+.step-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.hidden { display: none !important; }
+
+/* ─── Name Input ──────────────────────────────────────────────────────────── */
+.name-input-wrap {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  background: white;
+  border: 2px solid var(--cream-dark);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input[type="text"]:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(26,158,143,0.12);
+}
+
+input[type="text"]::placeholder { color: #aaa; }
+
+/* ─── Buttons ─────────────────────────────────────────────────────────────── */
+.btn-primary {
+  background: var(--teal);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover { background: var(--teal-mid); }
+.btn-primary:active { transform: scale(0.97); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--teal-mid);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-ghost:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+/* ─── Syllable Editor ─────────────────────────────────────────────────────── */
+.syllable-editor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  min-height: 56px;
+}
+
+.syl-pill {
+  display: flex;
+  align-items: center;
+  background: var(--teal);
+  border-radius: 50px;
+  overflow: hidden;
+  animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.syl-input {
+  background: transparent;
+  border: none;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 8px 4px 8px 14px;
+  width: 60px;
+  min-width: 40px;
+  max-width: 120px;
+  outline: none;
+  text-transform: uppercase;
+}
+
+.syl-input::placeholder { color: rgba(255,255,255,0.5); }
+.syl-input:focus { background: rgba(255,255,255,0.1); }
+
+.syl-remove {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 16px;
+  padding: 6px 10px 6px 4px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.syl-remove:hover { color: white; }
+
+.syl-separator {
+  font-size: 20px;
+  color: var(--text-muted);
+  padding: 0 2px;
+  user-select: none;
+}
+
+.syl-add {
+  width: 40px;
+  height: 40px;
+  background: var(--cream-dark);
+  border: 2px dashed var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--teal);
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.syl-add:hover {
+  background: var(--teal-light);
+  border-color: var(--teal);
+}
+
+/* ─── Hint Input ──────────────────────────────────────────────────────────── */
+.hint-wrap {
+  margin-bottom: 1.5rem;
+}
+
+.hint-wrap label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+.optional {
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+/* ─── Audio Tabs ──────────────────────────────────────────────────────────── */
+.audio-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  background: var(--cream-dark);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tab-btn.active {
+  background: var(--teal);
+  color: white;
+}
+
+/* ─── Recorder ────────────────────────────────────────────────────────────── */
+.recorder-ui, .tts-ui {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.waveform {
+  width: 100%;
+  height: 72px;
+  background: var(--teal-dark);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.waveform-bars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 100%;
+  padding: 0 12px;
+}
+
+.bar {
+  width: 4px;
+  height: 8px;
+  background: var(--teal);
+  border-radius: 2px;
+  opacity: 0.3;
+  transition: height 0.05s ease, opacity 0.05s ease;
+}
+
+.recorder-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-record {
+  background: #e84040;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-record:hover { background: #c43030; }
+.btn-record:active { transform: scale(0.97); }
+
+.rec-dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+.btn-stop {
+  background: #555;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-stop:hover { background: #333; }
+
+.recording-status {
+  font-size: 13px;
+  color: var(--text-muted);
+  min-height: 20px;
+  text-align: center;
+}
+
+.audio-player {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* ─── TTS UI ──────────────────────────────────────────────────────────────── */
+.tts-input-wrap, .tts-voices {
+  width: 100%;
+}
+
+.tts-input-wrap label, .tts-voices label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+select {
+  width: 100%;
+  background: white;
+  border: 2px solid var(--cream-dark);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+}
+
+select:focus { border-color: var(--teal); }
+
+.tts-controls {
+  display: flex;
+  gap: 10px;
+}
+
+/* ─── Step Actions ────────────────────────────────────────────────────────── */
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--cream-dark);
+}
+
+/* ─── Preview Card ────────────────────────────────────────────────────────── */
+.preview-card {
+  background: var(--teal-dark);
+  color: white;
+  border-radius: 20px;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.preview-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(26,158,143,0.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.card-name {
+  font-family: 'Fraunces', serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.card-syllables {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.preview-syl {
+  background: var(--teal);
+  color: white;
+  padding: 5px 14px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+}
+
+.card-hint {
+  font-size: 13px;
+  color: rgba(245,240,232,0.6);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.card-audio-btn {
+  background: var(--teal);
+  border: none;
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0.5rem auto 0;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.card-audio-btn:hover { background: #14b8a6; transform: scale(1.08); }
+.card-audio-btn:active { transform: scale(0.95); }
+
+/* ─── Export Cards ────────────────────────────────────────────────────────── */
+.export-options {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.export-card {
+  background: var(--cream-dark);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.export-card-title {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.export-card p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.code-block {
+  background: var(--teal-dark);
+  color: rgba(245,240,232,0.8);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 140px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  scrollbar-width: thin;
+}
+
+.btn-copy {
+  background: white;
+  color: var(--teal-mid);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-copy:hover {
+  background: var(--teal-light);
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+/* ─── Badge Preview ───────────────────────────────────────────────────────── */
+.badge-preview {
+  margin-bottom: 1rem;
+}
+
+.badge-card {
+  display: inline-block;
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.bp-name {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.bp-syls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.bp-syl {
+  background: var(--teal-light);
+  color: var(--teal-mid);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.bp-hint {
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
+}
+
+.bp-audio-label {
+  font-size: 11px;
+  color: var(--teal);
+  margin-top: 4px;
+}
+
+.start-over {
+  display: block;
+  margin: 1.5rem auto 0;
+}
+
+/* ─── Footer ──────────────────────────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(245,240,232,0.3);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .step { padding: 1.5rem; }
+  .name-input-wrap { flex-direction: column; }
+  .btn-primary, input[type="text"] { width: 100%; }
+  .tts-controls { flex-direction: column; }
+  .step-actions { flex-direction: column; gap: 10px; }
+}
+
+/* ─── Dictionary Badge & Origin Hint ─────────────────────────────────────── */
+.dict-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 50px;
+  margin-bottom: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.dict-found {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.dict-estimated {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.origin-hint {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+/* ─── Stressed vs Unstressed Pill Visual Distinction ─────────────────────── */
+.syl-pill.stressed {
+  background: var(--teal);
+  box-shadow: 0 2px 8px rgba(26,158,143,0.35);
+}
+
+.syl-pill.unstressed {
+  background: var(--teal-mid);
+  opacity: 0.75;
+}
+
+.syl-pill.unstressed .syl-input {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
