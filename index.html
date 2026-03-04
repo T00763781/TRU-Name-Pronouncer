@@ -3,81 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Say My Name — Name Pronunciation Tool</title>
+  <title>TRU Pronounce — Name Breakdown</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,800;1,300;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <main class="page">
+    <section class="editor" aria-label="Name editor">
+      <div class="editor-card">
+        <label class="sr-only" for="nameInput">Add your name</label>
+        <input id="nameInput" class="name-input" type="text" placeholder="Add your name" autocomplete="off" spellcheck="false" />
 
-  <header>
-    <div class="logo">
-      <span class="logo-icon">◎</span>
-      <span class="logo-text">say<em>my</em>name</span>
-    </div>
-    <p class="tagline">Help people say your name right — every time.</p>
-  </header>
+        <div class="row">
+          <div id="syllableEditor" class="chips" aria-label="Syllable chips"></div>
+          <button id="addSyllableBtn" class="add-btn" type="button" aria-label="Add syllable">+</button>
+        </div>
 
-  <main>
-    <!-- STEP 1: Name Entry -->
-    <section class="step" id="step-1">
-      <div class="step-label">01 — your name</div>
-      <div class="name-input-wrap">
-        <input type="text" id="nameInput" placeholder="Type your name..." autocomplete="off" spellcheck="false" />
-        <button id="syllabifyBtn" class="btn-primary">Break it down →</button>
+        <label class="sr-only" for="hintInput">Plain language guidance</label>
+        <input id="hintInput" class="hint-input" type="text" placeholder='Add plain language guidance (e.g., Like "David" with a “K” instead of “D”)' />
       </div>
     </section>
 
-    <!-- STEP 2: Syllables -->
-    <section class="step hidden" id="step-2">
-      <div class="step-label">02 — phonetic breakdown</div>
-      <div id="dictBadge" class="dict-badge hidden"></div>
-      <div id="originHint" class="origin-hint hidden"></div>
-      <p class="step-hint">Click a syllable to pick alternatives. + to add, × to remove.</p>
-
-      <div id="syllableEditor" class="syllable-editor"></div>
-
-      <div class="hint-wrap">
-        <label for="hintInput">Plain language hint <span class="optional">(optional)</span></label>
-        <input type="text" id="hintInput" placeholder='e.g. Like "David" with a "K" instead of "D"' />
-      </div>
-
-      <button class="btn-primary" id="toCardBtn">Save →</button>
-    </section>
-
-    <!-- STEP 3: Card + Export -->
-    <section class="step hidden" id="step-3">
-      <div class="step-label">03 — your pronunciation card</div>
-
+    <section class="preview" aria-label="Pronunciation card preview">
       <div class="preview-card" id="previewCard">
-        <div class="card-name" id="cardName"></div>
-        <div class="card-syllables" id="cardSyllables"></div>
-        <div class="card-hint" id="cardHint"></div>
+        <div class="preview-name" id="cardName"> </div>
+        <div class="preview-chips" id="cardSyllables"></div>
+        <div class="preview-hint" id="cardHint"></div>
       </div>
 
-      <div class="export-options">
-        <div class="export-card">
-          <div class="export-card-title">📋 HTML Snippet</div>
-          <p>Copy and paste into an email signature, LMS profile, or a course page.</p>
-          <div class="code-block" id="htmlSnippetBlock"></div>
-          <button class="btn-copy" id="copyHtmlBtn">Copy HTML</button>
-        </div>
-
-        <div class="export-card">
-          <div class="export-card-title">⬇ Download card page</div>
-          <p>Download a self-contained HTML file you can host on GitHub Pages.</p>
-          <div class="badge-preview" id="badgePreview"></div>
-          <button class="btn-primary" id="downloadPageBtn">Download HTML page</button>
-        </div>
+      <div class="save-shell">
+        <button class="save-btn" id="saveBtn" type="button">Save</button>
       </div>
 
-      <button class="btn-ghost start-over" id="startOverBtn">← Start over</button>
+      <p class="subnote" id="saveNote">Saving downloads a shareable HTML card.</p>
     </section>
-  </main>
 
-  <footer>
-    <p>Built for humans. Names matter. ◎</p>
-  </footer>
+    <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+  </main>
 
   <script type="module" src="app.js"></script>
 </body>
